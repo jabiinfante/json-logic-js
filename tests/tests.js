@@ -15,8 +15,8 @@ var download = function(url, dest, cb) {
   });
 };
 
-var remote_or_cache = function(remote_url, local_file, description, runner){
-  var parse_and_iterate = function(local_file, description, runner){
+var remote_or_cache = function(remote_url, local_file, description, runner) {
+  var parse_and_iterate = function(local_file, description, runner) {
     fs.readFile(local_file, "utf8", function(error, body) {
       var tests;
       try{
@@ -309,4 +309,18 @@ QUnit.test("Handle correctly single item objects", function(assert) {
     jsonLogic.apply({"if": [true, {"item": 10}, "no"]}),
     {"item": 10}
   );
+});
+
+QUnit.test("Resolve expressions on deep objects", function(assert) {
+  assert.deepEqual(
+    jsonLogic.apply({"if": [true, {"item": {"+": [5, 5]}}, "no"]}),
+    {"item": 10}
+  );
+
+  // Handle null since typeof null === "object" but Object.keys(null) breaks
+  assert.deepEqual(
+    jsonLogic.apply({"if": [true, {"item": {"deep": null}}, "no"]}),
+    {"item": {"deep": null}}
+  );
+
 });

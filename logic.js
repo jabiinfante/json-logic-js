@@ -235,6 +235,13 @@ http://ricostacruz.com/cheatsheets/umdjs.html
     // You've recursed to a primitive, stop!
     // If your are called from outside
     if (!jsonLogic.is_logic(logic)) {
+      // If you are an object, we can try to resolve your deepest secrets
+      if (typeof (logic) === "object" && logic !== null) {
+        return Object.keys(logic).reduce(function(acc, currKey) {
+          acc[currKey] = jsonLogic.apply(logic[currKey], data);
+          return acc;
+        }, {});
+      }
       return logic;
     }
 
